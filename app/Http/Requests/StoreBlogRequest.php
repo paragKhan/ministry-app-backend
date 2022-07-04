@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class StoreSupportMessage extends FormRequest
+class StoreBlogRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +24,8 @@ class StoreSupportMessage extends FormRequest
     public function rules()
     {
         return [
-            'message' => ['nullable', 'string', Rule::requiredIf(!$this->attachment)],
-            'attachment' => 'mimes:jpeg,jpg,png,pdf'
+            'subject' => 'required|string',
+            'description' => 'required|string'
         ];
     }
 }

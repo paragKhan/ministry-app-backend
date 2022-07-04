@@ -1,11 +1,10 @@
 <?php
 
-use App\Constants;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSupportConversationsTable extends Migration
+class CreateReactionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,15 +13,11 @@ class CreateSupportConversationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('support_conversations', function (Blueprint $table) {
+        Schema::create('reactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('language');
-            $table->string('fname');
-            $table->string('lname');
-            $table->string('email');
-            $table->string('subject');
-            $table->enum('status', Constants::SUPPORT_STATUSES)->default('waiting');
+            $table->foreignId('blog_id')->constrained()->onDelete('cascade');
+            $table->string('type')->default('like');
             $table->timestamps();
         });
     }
@@ -34,6 +29,6 @@ class CreateSupportConversationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('support_conversations');
+        Schema::dropIfExists('reactions');
     }
 }

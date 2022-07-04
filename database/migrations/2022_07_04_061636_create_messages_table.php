@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSupportMessagesTable extends Migration
+class CreateMessagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateSupportMessagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('support_messages', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->nullableMorphs('senderable');
-            $table->foreignId('support_conversation_id')->constrained()->onDelete('cascade');
-            $table->text('message')->nullable();
+            $table->foreignId('conversation_id')->constrained()->onDelete('cascade');
+            $table->text('text')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateSupportMessagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('support_messages');
+        Schema::dropIfExists('messages');
     }
 }
