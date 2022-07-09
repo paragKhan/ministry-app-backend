@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBlogRequest;
 use App\Models\Blog;
+use App\Models\Reaction;
 use Illuminate\Http\Request;
 
 class BlogController extends Controller
@@ -69,5 +70,14 @@ class BlogController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function toggleReact(Blog $blog){
+        $reaction = $blog->reactions()->where('user_id', auth()->id())->first();
+        if($reaction){
+            $reaction->delete();
+        }else{
+            $blog->reactions()->create(['user_id' => auth()->id()]);
+        }
     }
 }

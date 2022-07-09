@@ -13,10 +13,14 @@ class Blog extends Model implements HasMedia
 
     protected $guarded = [];
     protected $hidden = ['media'];
-    protected $appends = ['photo'];
+    protected $appends = ['photo', 'reacted'];
 
     public function getPhotoAttribute(){
         return $this->getFirstMediaUrl('photo');
+    }
+
+    public function getReactedAttribute(){
+        return $this->reactions()->where('user_id', auth()->id())->first() != null;
     }
 
     public function comments(){

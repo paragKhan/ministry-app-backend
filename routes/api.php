@@ -38,7 +38,10 @@ Route::prefix('user')->group(function () {
         Route::put('profile', [UserAuthController::class, 'updateProfile']);
 
         //Blog
+        Route::get('blogs/{blog}/toggle-react', [BlogController::class, 'toggleReact']);
         Route::apiResource('blogs', BlogController::class)->only('index', 'show');
+
+        //Comment
         Route::post('comments', [CommentController::class, 'postComment']);
         Route::delete('comments/{comment}', [CommentController::class, 'deleteComment']);
     });

@@ -25,6 +25,10 @@ class CommentController extends Controller
     }
 
     public function deleteComment(Comment $comment){
+        if($comment->user_id != auth()->id()){
+            abort(403);
+        }
+
         $comment->delete();
 
         return response()->json(['message' => 'Comment deleted']);
