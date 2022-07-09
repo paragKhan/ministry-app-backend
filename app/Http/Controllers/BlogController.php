@@ -76,8 +76,10 @@ class BlogController extends Controller
         $reaction = $blog->reactions()->where('user_id', auth()->id())->first();
         if($reaction){
             $reaction->delete();
+            return false;
         }else{
             $blog->reactions()->create(['user_id' => auth()->id()]);
+            return true;
         }
     }
 }
