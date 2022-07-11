@@ -3,6 +3,8 @@
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\SupportConversationController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
@@ -24,10 +26,6 @@ Route::prefix('user')->group(function () {
     Route::post('login', [UserAuthController::class, 'login']);
     Route::post('signup', [UserAuthController::class, 'signup']);
 
-    //Email Verification
-//    Route::post('send-verification-email', [UserAuthController::class, 'sendVerificationEmail'])->middleware('auth:api_user');
-//    Route::get('verify-email/{id}/{hash}', [UserAuthController::class, 'verifyEmail'])->name('verification.verify')->middleware('auth:api_user');
-
     //Forgot and Reset password
 //    Route::post('forgot-password', [UserAuthController::class, "forgotPassword"]);
 //    Route::post('reset-password', [UserAuthController::class, "resetPassword"])->name('password.reset');
@@ -44,6 +42,10 @@ Route::prefix('user')->group(function () {
         //Comment
         Route::post('comments', [CommentController::class, 'postComment']);
         Route::delete('comments/{comment}', [CommentController::class, 'deleteComment']);
+
+        //Message
+        Route::post('send-message', [MessageController::class, 'sendMessage']);
+        Route::get('inbox', [MessageController::class, 'inbox']);
     });
 
 });
@@ -57,6 +59,10 @@ Route::prefix('admin')->group(function () {
 
         //Blog
         Route::apiResource('blogs', BlogController::class);
+
+        //Conversations
+        Route::get('conversations', [ConversationController::class, 'index']);
+        Route::get('conversations/{conversation}', [ConversationController::class, 'show']);
     });
 
 });

@@ -28,7 +28,7 @@ class User extends Authenticatable implements CanResetPassword, HasMedia
         return $this->getFirstMediaUrl('nib_photo');
     }
 
-    public function support_conversations(){
-        return $this->hasMany(SupportConversation::class);
+    public function conversations(){
+        return $this->hasMany(Conversation::class);
     }
 }

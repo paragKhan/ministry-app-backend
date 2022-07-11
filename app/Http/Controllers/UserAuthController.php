@@ -56,31 +56,6 @@ class UserAuthController extends Controller
         return response()->json($user);
     }
 
-    public function sendVerificationEmail(Request $request)
-    {
-        if ($request->user()->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Already Verified']);
-        }
-
-        $request->user()->sendEmailVerificationNotification();
-
-        return response()->json(['message' => 'Verification link sent']);
-    }
-
-    public function verifyEmail(EmailVerificationRequest $request)
-    {
-        if ($request->user()->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email already verified']);
-        }
-
-        if ($request->user()->markEmailAsVerified()) {
-            event(new Verified($request->user()));
-            Mail::to($request->user())->send(new AccountVerified());
-        }
-
-        return response()->json('Email has been verified');
-    }
-
     public function forgotPassword(Request $request)
     {
         $request->validate([
