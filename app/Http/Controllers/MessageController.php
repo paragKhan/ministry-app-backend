@@ -31,6 +31,6 @@ class MessageController extends Controller
     }
 
     public function inbox(){
-        return auth()->user()->conversations()->firstOrCreate()->messages()->simplePaginate(20);
+        return auth()->user()->conversations()->firstOrCreate()->messages()->latest()->simplePaginate(20);
     }
 }
