@@ -22,12 +22,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/test', function(){
-    $data = User::find(3)->getFirstMediaUrl('nib_photo');
-
-    dd($data);
-});
-
 //User
 Route::prefix('user')->group(function () {
     Route::post('login', [UserAuthController::class, 'login']);
@@ -70,6 +64,7 @@ Route::prefix('admin')->group(function () {
         //Conversations
         Route::get('conversations', [ConversationController::class, 'index']);
         Route::get('conversations/{conversation}', [ConversationController::class, 'show']);
+        Route::post('conversations/{conversation}/send-message', [ConversationController::class, 'sendMessage']);
     });
 
 });
