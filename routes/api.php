@@ -8,6 +8,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\SupportConversationController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,6 +21,12 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::get('/test', function(){
+    $data = User::find(3)->getFirstMediaUrl('nib_photo');
+
+    dd($data);
+});
 
 //User
 Route::prefix('user')->group(function () {

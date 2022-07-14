@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBlogRequest;
+use App\Http\Requests\UpdateBlogRequest;
 use App\Models\Blog;
-use App\Models\Reaction;
-use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
@@ -56,9 +55,16 @@ class BlogController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateBlogRequest $request, Blog $blog)
     {
-        //
+        $blog->update($request->validated());
+
+        if($request->has('photo')){
+            $blog->clearMediaCollection('photo');
+            $blog->addMediaFromRequest('photo')->toMediaCollection('photo');
+        }
+
+        return response()->json($blog);
     }
 
     /**
@@ -67,9 +73,11 @@ class BlogController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Blog $blog)
     {
-        //
+        $blog->delete();
+
+        return response()->json(['message'=>'Blog deleted']);
     }
 
     public function toggleReact(Blog $blog){
