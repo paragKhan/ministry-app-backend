@@ -21,7 +21,7 @@ class CommentController extends Controller
             'user_id' => auth()->id()
         ]);
 
-        return response()->json($comment);
+        return response()->json($comment->load('user'));
     }
 
     public function deleteComment(Comment $comment){
