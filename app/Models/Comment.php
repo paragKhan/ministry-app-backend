@@ -10,6 +10,7 @@ class Comment extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $with = ['user'];
 
     public function blog(){
         return $this->belongsTo(Blog::class);
