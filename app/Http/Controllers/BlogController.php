@@ -15,7 +15,13 @@ class BlogController extends Controller
      */
     public function index()
     {
-        $blogs = Blog::simplePaginate(20);
+        $blogs = null;
+
+        if (isUser()) {
+            $blogs = Blog::all();
+        } else if (isAdmin()) {
+            $blogs = Blog::simplePaginate(20);
+        }
 
         return response()->json($blogs);
     }
@@ -59,7 +65,7 @@ class BlogController extends Controller
     {
         $blog->update($request->validated());
 
-        if($request->has('photo')){
+        if ($request->has('photo')) {
             $blog->clearMediaCollection('photo');
             $blog->addMediaFromRequest('photo')->toMediaCollection('photo');
         }
@@ -77,15 +83,16 @@ class BlogController extends Controller
     {
         $blog->delete();
 
-        return response()->json(['message'=>'Blog deleted']);
+        return response()->json(['message' => 'Blog deleted']);
     }
 
-    public function toggleReact(Blog $blog){
+    public function toggleReact(Blog $blog)
+    {
         $reaction = $blog->reactions()->where('user_id', auth()->id())->first();
-        if($reaction){
+        if ($reaction) {
             $reaction->delete();
             return false;
-        }else{
+        } else {
             $blog->reactions()->create(['user_id' => auth()->id()]);
             return true;
         }
