@@ -5,21 +5,25 @@ namespace App\Http\Controllers;
 use App\Models\Admin;
 use App\Models\Conversation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class ConversationController extends Controller
 {
-    public function index(){
-        $conversations =  Conversation::with('user')->get();
+    public function index(Request $request)
+    {
+        $conversations = Conversation::with('user')->get();
 
         return response()->json($conversations);
     }
 
-    public function show(Conversation $conversation){
+    public function show(Conversation $conversation)
+    {
         return response()->json($conversation->messages);
     }
 
-    public function sendMessage(Request $request, Conversation $conversation){
+    public function sendMessage(Request $request, Conversation $conversation)
+    {
         $request->validate([
             'text' => ['nullable', 'string', Rule::requiredIf(!$request->attachment)],
             'attachment' => 'mimes:jpeg,jpg,png,pdf'
@@ -31,7 +35,7 @@ class ConversationController extends Controller
             'senderable_id' => auth()->id()
         ]);
 
-        if($request->has('attachment') && $request->attachment){
+        if ($request->has('attachment') && $request->attachment) {
             $message->addMediaFromRequest('attachment')->toMediaCollection('attachment');
         }
 

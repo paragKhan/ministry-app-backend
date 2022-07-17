@@ -10,6 +10,7 @@ class Conversation extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $with = ["user"];
 
     public function user(){
         return $this->belongsTo(User::class);
