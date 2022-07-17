@@ -5,15 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserSignupRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Mail\Users\AccountVerified;
+use App\Mail\Users\SendOtp;
 use App\Mail\Users\Welcome;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Mail\Mailable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 
 class UserAuthController extends Controller
 {
@@ -56,41 +61,63 @@ class UserAuthController extends Controller
         return response()->json($user);
     }
 
-    public function forgotPassword(Request $request)
+    public function sendForgotPasswordOTP(Request $request)
     {
         $request->validate([
-            'email' => 'required|email'
+            'email' => 'required|email|exists:users'
         ]);
 
-        $status = Password::sendResetLink($request->only('email'));
+        $token = random_int(100000, 999999);
 
-        if ($status == Password::RESET_LINK_SENT) {
-            return ['message' => __($status)];
+        DB::table('password_resets')->insert([
+            'email' => $request->email,
+            'token' => $token,
+            'created_at' => now()
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        Mail::to($user)->send(new SendOtp($token));
+
+        return response()->json(['message' => 'OTP sent']);
+    }
+
+    public function confirmForgotPasswordOTP(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users',
+            'token' => 'required|string|max:6'
+        ]);
+
+        $match = DB::table('password_resets')->where('email', $request->email)->where('token', $request->token)->first();
+
+        if ($match)
+            return response()->json(true);
+        else {
+            return response()->json(false);
         }
-
-        return response(['message' => __($status)], 500);
     }
 
     public function resetPassword(Request $request)
     {
         $request->validate([
             'token' => 'required',
-            'email' => 'required|email',
+            'email' => 'required|email|exists:users',
             'password' => 'required|min:6'
         ]);
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'token'),
-            function ($user) use ($request) {
-                $user->update(['password' => Hash::make($request->password)]);
-                event(new PasswordReset($user));
-            }
-        );
+       $match = DB::table('password_resets')->where('email', $request->email)->where('token', $request->token)->first();
 
-        if ($status == Password::PASSWORD_RESET) {
-            return ['message' => __($status)];
-        }
+       if($match){
+           $user = User::where('email', $request->email)->first();
 
-        return response(['message' => __($status)], 500);
+           $user->update([
+               'password' => Hash::make($request->password)
+           ]);
+
+           return response()->json(['message' => 'Password Reset Successfull']);
+       }
+
+       abort(500);
     }
 }

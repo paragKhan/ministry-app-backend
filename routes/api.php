@@ -28,8 +28,10 @@ Route::prefix('user')->group(function () {
     Route::post('signup', [UserAuthController::class, 'signup']);
 
     //Forgot and Reset password
-//    Route::post('forgot-password', [UserAuthController::class, "forgotPassword"]);
-//    Route::post('reset-password', [UserAuthController::class, "resetPassword"])->name('password.reset');
+    Route::post('forgot-password/send-otp', [UserAuthController::class, 'sendForgotPasswordOTP']);
+    Route::post('forgot-password/confirm-otp', [UserAuthController::class, 'confirmForgotPasswordOTP']);
+    Route::post('forgot-password/reset-password', [UserAuthController::class, 'resetPassword']);
+
 
     Route::middleware('auth:api_user')->group(function () {
         Route::get('logout', [UserAuthController::class, 'logout']);
